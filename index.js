@@ -34,13 +34,17 @@ var map = new mapboxgl.Map({
     attributionControl: false
 });
 
-var headerHeight = document.querySelector('header').clientHeight + 25;
-var footerHeight = document.querySelector('footer').clientHeight + 15;
+function headerHeight(padding) {
+    return document.querySelector('header').clientHeight + padding;
+}
+function footerHeight(padding) {
+    return document.querySelector('footer').clientHeight + padding;
+}
 
 map.fitBounds([[-128, 25], [-65, 50]], {
     padding: {
-        top: headerHeight,
-        bottom: footerHeight,
+        top: headerHeight(25),
+        bottom: footerHeight(15),
         left: 0,
         right: 0
     }
@@ -64,10 +68,10 @@ map.on('load', function() {
             visibility: 'visible'
         },
         'paint': {
-            'fill-opacity': 0.5,
+            'fill-opacity': 0.55,
             'fill-color': {
                 'property': 'persons_el',
-                'stops': [[187875, '#f1a340'], [581499, '#f7f7f7'], [677344, '#998ec3']]
+                'stops': [[187875, '#f1a340'], [581499, '#ebdddd'], [677344, '#998ec3']]
             }
         }
     });
@@ -80,10 +84,10 @@ map.on('load', function() {
             visibility: 'none'
         },
         'paint': {
-            'fill-opacity': 0.4,
+            'fill-opacity': 0.47,
             'fill-color': {
                 'property': 'population',
-                'stops': [[526284, '#f1a340'], [719187, '#f7f7f7'], [989414, '#998ec3']]
+                'stops': [[526284, '#f1a340'], [719187, '#ebdddd'], [989414, '#998ec3']]
             }
         }
     });
@@ -110,10 +114,10 @@ map.on('load', function() {
             visibility: 'none'
         },
         'paint': {
-            'fill-opacity': 0.4,
+            'fill-opacity': 0.47,
             'fill-color': {
                 'property': 'persons_se',
-                'stops': [[281813, '#f1a340'], [3128465, '#f7f7f7'], [18626978, '#998ec3']]
+                'stops': [[281813, '#f1a340'], [3128465, '#ebdddd'], [18626978, '#998ec3']]
             }
         },
         'filter' : ['!=', 'geoid', '11']
@@ -125,16 +129,24 @@ map.on('click', 'electoral', function(e) {
         updateQueryInfo('electoral', e.features[0].properties.name);
     }
 });
+map.on('mouseenter', 'electoral', () => map.getCanvas().style.cursor = 'pointer');
+map.on('mouseleave', 'electoral', () => map.getCanvas().style.cursor = '');
+
 map.on('click', 'house', function(e) {
     if (map.getLayoutProperty('house', 'visibility') === 'visible') {
         updateQueryInfo('house', e.features[0].properties.abbreviati);
     }
 });
+map.on('mouseenter', 'house', () => map.getCanvas().style.cursor = 'pointer');
+map.on('mouseleave', 'house', () => map.getCanvas().style.cursor = '');
+
 map.on('click', 'senate', function(e) {
     if (map.getLayoutProperty('senate', 'visibility') === 'visible') {
         updateQueryInfo('senate', e.features[0].properties.name);
     }
 });
+map.on('mouseenter', 'senate', () => map.getCanvas().style.cursor = 'pointer');
+map.on('mouseleave', 'senate', () => map.getCanvas().style.cursor = '');
 
 function updateLegend(high, mid, low, text) {
     document.getElementById('highVal').innerHTML = high;
@@ -166,8 +178,8 @@ function toggleLayer(layer, feature) {
     if (feature) {
         map.fitBounds(JSON.parse(feature.b), {
             padding: {
-                top: headerHeight,
-                bottom: footerHeight,
+                top: headerHeight(25),
+                bottom: footerHeight(20),
                 left: 0,
                 right: 0
             }
@@ -265,17 +277,17 @@ function search(input) {
             result1.innerHTML = '<b>State</b>: ' + stateResults[0].n;
             result1.style.display = 'block';
             result1.onclick = function() {
+                document.getElementById('queryInfo').style.display = 'none';
                 toggleLayer('electoral', stateResults[0]);
                 clearResults();
-                document.getElementById('queryInfo').style.display = 'none';
             }
             if (countStateResults > 1) {
                 result2.innerHTML = '<b>State</b>: ' + stateResults[1].n;
                 result2.style.display = 'block';
                 result2.onclick = function() {
+                    document.getElementById('queryInfo').style.display = 'none';
                     toggleLayer('electoral', stateResults[1]);
                     clearResults();
-                    document.getElementById('queryInfo').style.display = 'none';
                 }
             }
         }
@@ -285,17 +297,17 @@ function search(input) {
             result3.innerHTML = '<b>District</b>: ' + districtResults[0].a;
             result3.style.display = 'block';
             result3.onclick = function() {
+                document.getElementById('queryInfo').style.display = 'none';
                 toggleLayer('house', districtResults[0]);
                 clearResults();
-                document.getElementById('queryInfo').style.display = 'none';
             }
             if (countDistrictResults > 1) {
                 result4.innerHTML = '<b>District</b>: ' + districtResults[1].a;
                 result4.style.display = 'block';
                 result4.onclick = function() {
+                    document.getElementById('queryInfo').style.display = 'none';
                     toggleLayer('house', districtResults[1]);
                     clearResults();
-                    document.getElementById('queryInfo').style.display = 'none';
                 }
             }
         }
